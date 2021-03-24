@@ -29,6 +29,8 @@ dependencies {
   annotationProcessor 'org.projectlombok:lombok'
   testImplementation 'org.springframework.boot:spring-boot-starter-test'
   testImplementation 'io.projectreactor:reactor-test'
+
+  implementation 'software.amazon.awssdk:dynamodb-enhanced:2.16.26'
 }
 
 test {

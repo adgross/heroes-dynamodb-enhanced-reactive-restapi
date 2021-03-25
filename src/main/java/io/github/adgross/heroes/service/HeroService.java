@@ -10,7 +10,9 @@ public interface HeroService {
 
   public Mono<Hero> findById(String id);
 
-  public Mono<Hero> save(Hero hero);
+  public Mono<Hero> create(Hero hero);
+
+  public Mono<Hero> update(String id, Hero hero);
 
   public Mono<Hero> deleteById(String id);
 }

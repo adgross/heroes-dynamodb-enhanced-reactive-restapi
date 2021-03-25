@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -44,7 +45,15 @@ public class HeroController {
   @ResponseStatus(HttpStatus.CREATED)
   public Mono<Hero> create(@RequestBody Hero hero) {
     log.info("Creating a new hero");
-    return heroService.save(hero);
+    return heroService.create(hero);
+  }
+
+  @PutMapping("/{id}")
+  @ResponseStatus(HttpStatus.OK)
+  public Mono<Hero> update(@PathVariable String id, @RequestBody Hero hero) {
+    log.info("Updating the hero with id {}", id);
+    return heroService.update(id, hero)
+        .switchIfEmpty(Mono.error(new HeroNotFoundException(id)));
   }
 
   @DeleteMapping("/{id}")

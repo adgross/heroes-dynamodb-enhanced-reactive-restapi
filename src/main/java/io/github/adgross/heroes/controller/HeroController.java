@@ -1,5 +1,6 @@
 package io.github.adgross.heroes.controller;
 
+import io.github.adgross.heroes.exception.HeroNotFoundException;
 import io.github.adgross.heroes.model.Hero;
 import io.github.adgross.heroes.service.HeroService;
 import lombok.extern.slf4j.Slf4j;
@@ -35,7 +36,8 @@ public class HeroController {
   @ResponseStatus(HttpStatus.OK)
   public Mono<Hero> findById(@PathVariable String id) {
     log.info("Requesting the hero with id {}", id);
-    return heroService.findById(id);
+    return heroService.findById(id)
+        .switchIfEmpty(Mono.error(new HeroNotFoundException(id)));
   }
 
   @PostMapping
@@ -49,7 +51,8 @@ public class HeroController {
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public Mono<Hero> deleteById(@PathVariable String id) {
     log.info("Deleting the hero with id {}", id);
-    return heroService.deleteById(id);
+    return heroService.deleteById(id)
+        .switchIfEmpty(Mono.error(new HeroNotFoundException(id)));
   }
 
 }

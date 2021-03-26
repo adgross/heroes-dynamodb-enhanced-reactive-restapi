@@ -6,6 +6,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import io.github.adgross.heroes.model.Hero;
 import io.github.adgross.heroes.service.HeroService;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,6 +61,45 @@ public class HeroControllerTest {
         .accept(APPLICATION_JSON)
         .exchange()
         .expectStatus().isNotFound();
+  }
+
+  @Test
+  public void createWithValidHero() {
+    String requestHero = "{\"name\":\"Sonic\",\"universe\":\"Sonic\",\"films\":1}";
+    Hero serverHero = new Hero("1", "Sonic", "Sonic", 1);
+    String responseHero = "{\"id\":\"1\",\"name\":\"Sonic\",\"universe\":\"Sonic\",\"films\":1}";
+
+    Mockito.when(heroService.create(Mockito.any(Hero.class)))
+        .thenReturn(Mono.just(serverHero));
+
+    client.post()
+        .uri("/api/v1/heroes")
+        .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+        .bodyValue(requestHero)
+        .accept(APPLICATION_JSON)
+        .exchange()
+        .expectStatus().isCreated()
+        .expectBody().json(responseHero);
+  }
+
+
+  @Test
+  public void createWithInvalidHero() {
+    List<String> requestHeroes = List.of(
+        "{\"name\":\"Sonic\",\"universe\":\"Sonic\",\"films\":-1}", // negative films
+        "{\"name\":\"\"     ,\"universe\":\"Sonic\",\"films\": 1}", // empty name
+        "{\"name\":\"Sonic\",\"universe\":\"\"     ,\"films\": 1}"  // empty universe
+        );
+
+    for (var request : requestHeroes) {
+      client.post()
+          .uri("/api/v1/heroes")
+          .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+          .bodyValue(request)
+          .accept(APPLICATION_JSON)
+          .exchange()
+          .expectStatus().isBadRequest();
+    }
   }
 
 }

@@ -5,6 +5,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import io.github.adgross.heroes.model.Hero;
+import io.github.adgross.heroes.model.HeroRequest;
 import io.github.adgross.heroes.service.HeroService;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -69,7 +70,7 @@ public class HeroControllerTest {
     Hero serverHero = new Hero("1", "Sonic", "Sonic", 1);
     String responseHero = "{\"id\":\"1\",\"name\":\"Sonic\",\"universe\":\"Sonic\",\"films\":1}";
 
-    Mockito.when(heroService.create(Mockito.any(Hero.class)))
+    Mockito.when(heroService.create(Mockito.any(HeroRequest.class)))
         .thenReturn(Mono.just(serverHero));
 
     client.post()

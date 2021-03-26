@@ -2,17 +2,18 @@ package io.github.adgross.heroes.service;
 
 
 import io.github.adgross.heroes.model.Hero;
+import io.github.adgross.heroes.model.HeroRequest;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public interface HeroService {
-  public Flux<Hero> listHeroes();
+  Flux<Hero> listHeroes();
 
-  public Mono<Hero> findById(String id);
+  Mono<Hero> findById(String id);
 
-  public Mono<Hero> create(Hero hero);
+  Mono<Hero> create(HeroRequest hero);
 
-  public Mono<Hero> update(String id, Hero hero);
+  Mono<Hero> update(String id, HeroRequest hero);
 
-  public Mono<Hero> deleteById(String id);
+  Mono<Hero> deleteById(String id);
 }

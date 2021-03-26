@@ -1,6 +1,7 @@
 package io.github.adgross.heroes.service;
 
 import io.github.adgross.heroes.model.Hero;
+import io.github.adgross.heroes.model.HeroRequest;
 import io.github.adgross.heroes.repository.HeroRepository;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,7 @@ public class HeroServiceImp implements HeroService {
     return heroRepository.get(id);
   }
 
-  public Mono<Hero> create(Hero hero) {
+  public Mono<Hero> create(HeroRequest hero) {
     Hero newHero = new Hero();
     newHero.setId(UUID.randomUUID().toString());
     newHero.setName(hero.getName());
@@ -33,7 +34,7 @@ public class HeroServiceImp implements HeroService {
         .then(Mono.just(newHero));
   }
 
-  public Mono<Hero> update(String id, Hero hero) {
+  public Mono<Hero> update(String id, HeroRequest hero) {
     Hero updated = new Hero();
     updated.setId(id);
     updated.setName(hero.getName());

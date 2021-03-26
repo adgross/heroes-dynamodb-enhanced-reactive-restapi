@@ -2,6 +2,7 @@ package io.github.adgross.heroes.controller;
 
 import io.github.adgross.heroes.exception.HeroNotFoundException;
 import io.github.adgross.heroes.model.Hero;
+import io.github.adgross.heroes.model.HeroRequest;
 import io.github.adgross.heroes.service.HeroService;
 import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -44,14 +45,14 @@ public class HeroController {
 
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
-  public Mono<Hero> create(@RequestBody @Valid Hero hero) {
+  public Mono<Hero> create(@RequestBody @Valid HeroRequest hero) {
     log.info("Creating a new hero");
     return heroService.create(hero);
   }
 
   @PutMapping("/{id}")
   @ResponseStatus(HttpStatus.OK)
-  public Mono<Hero> update(@PathVariable String id, @RequestBody @Valid Hero hero) {
+  public Mono<Hero> update(@PathVariable String id, @RequestBody @Valid HeroRequest hero) {
     log.info("Updating the hero with id {}", id);
     return heroService.update(id, hero)
         .switchIfEmpty(Mono.error(new HeroNotFoundException(id)));

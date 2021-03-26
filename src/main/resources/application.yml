@@ -1,1 +1,8 @@
-
+dynamodb:
+  endpoint: http://localhost:8000
+  table: heroes
+  region: sa-east-1
+server:
+  port: 8080
+  error:
+    include-message: "always"

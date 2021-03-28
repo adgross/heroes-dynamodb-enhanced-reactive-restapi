@@ -8,6 +8,7 @@ import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,6 +33,13 @@ public class HeroController {
   @ResponseStatus(HttpStatus.OK)
   public Flux<Hero> getAllItems() {
     log.info("Requesting the list of all heroes");
+    return heroService.listHeroes();
+  }
+
+  @GetMapping(value = "/items", produces = MediaType.APPLICATION_NDJSON_VALUE)
+  @ResponseStatus(HttpStatus.OK)
+  public Flux<Hero> items() {
+    log.info("Requesting list stream of all heroes");
     return heroService.listHeroes();
   }
 

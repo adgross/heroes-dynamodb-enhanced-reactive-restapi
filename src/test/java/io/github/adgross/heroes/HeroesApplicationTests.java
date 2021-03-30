@@ -27,13 +27,13 @@ class HeroesApplicationTests {
   private WebTestClient client;
 
   void forceCreate(String requestId, String requestHero) {
-    client.put()
+    client.post()
         .uri("/api/v1/heroes/{id}", requestId)
         .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
         .bodyValue(requestHero)
         .accept(APPLICATION_JSON)
         .exchange()
-        .expectStatus().isOk()
+        .expectStatus().isCreated()
         .expectBody()
         .json(requestHero);
   }

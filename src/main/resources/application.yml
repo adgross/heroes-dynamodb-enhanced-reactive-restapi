@@ -1,3 +1,6 @@
+spring:
+  profiles:
+    active: "local"
 dynamodb:
   endpoint: http://localhost:8000
   table: heroes

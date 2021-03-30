@@ -1,0 +1,11 @@
+spring:
+  profiles:
+    active: "local"
+dynamodb:
+  endpoint: http://localhost:8000
+  table: heroes-test
+  region: sa-east-1
+server:
+  port: 8080
+  error:
+    include-message: "always"

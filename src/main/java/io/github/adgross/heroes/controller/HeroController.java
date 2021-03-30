@@ -58,6 +58,16 @@ public class HeroController {
     return heroService.create(hero);
   }
 
+  /**
+   * Create the Hero with given ID, overwrite if already exists.
+   */
+  @PostMapping("/{id}")
+  @ResponseStatus(HttpStatus.CREATED)
+  public Mono<Hero> forceCreate(@PathVariable String id, @RequestBody @Valid HeroRequest hero) {
+    log.info("Creating hero with id {}", id);
+    return heroService.forceCreate(id, hero);
+  }
+
   @PutMapping("/{id}")
   @ResponseStatus(HttpStatus.OK)
   public Mono<Hero> update(@PathVariable String id, @RequestBody @Valid HeroRequest hero) {

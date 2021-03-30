@@ -34,6 +34,16 @@ public class HeroServiceImp implements HeroService {
         .then(Mono.just(newHero));
   }
 
+  public Mono<Hero> forceCreate(String id, HeroRequest hero) {
+    Hero updated = new Hero();
+    updated.setId(id);
+    updated.setName(hero.getName());
+    updated.setUniverse(hero.getUniverse());
+    updated.setFilms(hero.getFilms());
+
+    return heroRepository.update(updated);
+  }
+
   public Mono<Hero> update(String id, HeroRequest hero) {
     Hero updated = new Hero();
     updated.setId(id);

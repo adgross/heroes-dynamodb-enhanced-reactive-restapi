@@ -13,6 +13,8 @@ public interface HeroService {
 
   Mono<Hero> create(HeroRequest hero);
 
+  Mono<Hero> forceCreate(String id, HeroRequest hero);
+
   Mono<Hero> update(String id, HeroRequest hero);
 
   Mono<Hero> deleteById(String id);

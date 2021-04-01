@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import reactor.core.publisher.Flux;
 import reactor.test.StepVerifier;
 
 /**
@@ -55,19 +56,12 @@ public class HeroRepositoryTest {
   }
 
   @Test
-  public void deleteAllAndPutAndGetAll() {
-    var clearDb = heroRepository.getAll()
-        .doOnNext(hero -> heroRepository.delete(hero));
-    StepVerifier.create(clearDb)
-        .thenConsumeWhile(hero -> true)
-        .verifyComplete();
+  public void resetPutAndGetAll() {
+    resetDb();
 
-    String id1 = "1";
-    String id2 = "2";
-    String id3 = "3";
-    Hero hero1 = new Hero(id1, "Sonic", "Sonic", 1);
-    Hero hero2 = new Hero(id2, "Shadow", "Sonic", 0);
-    Hero hero3 = new Hero(id3, "Silver", "Sonic", 0);
+    Hero hero1 = new Hero("1", "Sonic",  "Sonic", 1);
+    Hero hero2 = new Hero("2", "Shadow", "Sonic", 0);
+    Hero hero3 = new Hero("3", "Silver", "Sonic", 0);
 
     testPut(hero1);
     testPut(hero2);
@@ -79,6 +73,54 @@ public class HeroRepositoryTest {
         .recordWith(ArrayList::new)
         .expectNextCount(3)
         .expectRecordedMatches(h -> h.contains(hero1) && h.contains(hero2) && h.contains(hero3))
+        .verifyComplete();
+  }
+
+  @Test
+  public void resetPut5000AndGetAll() {
+    resetDb();
+
+    int limit = 5000;
+    var put5000 = Flux.range(1, limit)
+        .doOnNext(i -> testPut(new Hero(String.valueOf(i), "clone", "test", 1)))
+        .then();
+    var getAll = heroRepository.getAll();
+
+    StepVerifier.create(put5000)
+        .verifyComplete();
+    StepVerifier.create(getAll)
+        .recordWith(ArrayList::new)
+        .thenRequest(limit)
+        .expectNextCount(limit)
+        .expectRecordedMatches(heroes -> heroes.size() == limit)
+        .verifyComplete();
+  }
+
+  @Test
+  public void resetPutAndCancelGetAll() {
+    resetDb();
+
+    var putSome = Flux.range(1, 10)
+        .doOnNext(i -> testPut(new Hero(String.valueOf(i), "clone", "test", 1)))
+        .then();
+    var getAll = heroRepository.getAll();
+
+    StepVerifier.create(putSome)
+        .verifyComplete();
+    StepVerifier.create(getAll)
+        .thenRequest(1)
+        .expectNextCount(1)
+        .thenRequest(5)
+        .expectNextCount(5)
+        .thenCancel()
+        .verify();
+  }
+
+  @Test
+  public void resetDb() {
+    var deleteAll = heroRepository.resetTable();
+
+    StepVerifier.create(deleteAll)
         .verifyComplete();
   }
 

@@ -13,6 +13,7 @@ import software.amazon.awssdk.enhanced.dynamodb.Key;
 import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClient;
+import software.amazon.awssdk.services.dynamodb.model.DeleteTableRequest;
 
 @Repository
 @Slf4j
@@ -20,11 +21,13 @@ public class HeroRepository {
   private final DynamoDbAsyncClient ddb;
   private final DynamoDbEnhancedAsyncClient enhancedClient;
   private final DynamoDbAsyncTable<Hero> heroTable;
+  private final String tableName;
 
   public HeroRepository(@Value("${dynamodb.region}") String region,
                         @Value("${dynamodb.endpoint}") String endpoint,
                         @Value("${dynamodb.table}") String table) {
     var dynamodbRegion = Region.of(region);
+    tableName = table;
     ddb = DynamoDbAsyncClient.builder()
         .region(dynamodbRegion)
         .endpointOverride(URI.create(endpoint))
@@ -74,5 +77,12 @@ public class HeroRepository {
     return Mono.fromFuture(heroTable.deleteItem(key));
   }
 
+  public Mono<Void> resetTable() {
+    var delRequest = DeleteTableRequest.builder().tableName(tableName).build();
+    var delete = Mono.fromFuture(ddb.deleteTable(delRequest));
+    var create = Mono.fromFuture(heroTable.createTable());
+
+    return delete.then(create);
+  }
 
 }

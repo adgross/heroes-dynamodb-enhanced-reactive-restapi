@@ -55,7 +55,7 @@ public class HeroRepository {
 
   public Flux<Hero> getAll() {
     var results = heroTable.scan().items();
-    return Flux.from(results);
+    return Flux.from(results).onBackpressureBuffer();
   }
 
   public Mono<Void> put(Hero hero) {

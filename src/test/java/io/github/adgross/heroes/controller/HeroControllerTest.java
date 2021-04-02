@@ -34,7 +34,7 @@ public class HeroControllerTest {
   private WebTestClient client;
 
   @Test
-  public void findByIdWithValidId() {
+  public void findByIdWithValidIdRegistered() {
     String requestId = UUID.randomUUID().toString();
 
     Hero serverHero = new Hero(requestId, "Sonic", "Sonic", 1);
@@ -55,6 +55,21 @@ public class HeroControllerTest {
   }
 
   @Test
+  public void findByIdWithValidIdNotRegistered() {
+    String requestId = UUID.randomUUID().toString();
+
+    Mockito.when(heroService.findById(Mockito.any(String.class)))
+        .thenReturn(Mono.empty());
+
+    client.get()
+        .uri("/api/v1/heroes/{id}", requestId)
+        .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+        .accept(APPLICATION_JSON)
+        .exchange()
+        .expectStatus().isNotFound();
+  }
+
+  @Test
   public void findByIdWithInvalidId() {
     String requestId = "999";
 
@@ -66,7 +81,7 @@ public class HeroControllerTest {
         .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
         .accept(APPLICATION_JSON)
         .exchange()
-        .expectStatus().isNotFound();
+        .expectStatus().isBadRequest();
   }
 
   @Test

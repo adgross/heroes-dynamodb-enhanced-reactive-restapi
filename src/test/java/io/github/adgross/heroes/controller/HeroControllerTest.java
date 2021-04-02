@@ -188,6 +188,23 @@ public class HeroControllerTest {
   }
 
   @Test
+  public void updateWithValidIdAndHeroNotRegistered() {
+    String requestHero = "{\"name\":\"Sonic\",\"universe\":\"Sonic\",\"films\":1}";
+    String requestId = UUID.randomUUID().toString();
+
+    Mockito.when(heroService.update(Mockito.any(String.class), Mockito.any(HeroRequest.class)))
+        .thenReturn(Mono.empty());
+
+    client.put()
+        .uri("/api/v1/heroes/{id}", requestId)
+        .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+        .bodyValue(requestHero)
+        .accept(APPLICATION_JSON)
+        .exchange()
+        .expectStatus().isNotFound();
+  }
+
+  @Test
   public void updateWithValidIdAndInvalidHero() {
     String requestId = UUID.randomUUID().toString();
     List<String> requestHeroes = List.of(

@@ -4,6 +4,7 @@ import io.github.adgross.heroes.exception.HeroNotFoundException;
 import io.github.adgross.heroes.model.Hero;
 import io.github.adgross.heroes.model.HeroRequest;
 import io.github.adgross.heroes.service.HeroService;
+import java.util.UUID;
 import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,12 +44,12 @@ public class HeroController {
     return heroService.listHeroes();
   }
 
-  @GetMapping("/{id}")
+  @GetMapping("/{uuid}")
   @ResponseStatus(HttpStatus.OK)
-  public Mono<Hero> findById(@PathVariable String id) {
-    log.info("Requesting the hero with id {}", id);
-    return heroService.findById(id)
-        .switchIfEmpty(Mono.error(new HeroNotFoundException(id)));
+  public Mono<Hero> findById(@PathVariable @Valid UUID uuid) {
+    log.info("Requesting the hero with id {}", uuid);
+    return heroService.findById(uuid.toString())
+        .switchIfEmpty(Mono.error(new HeroNotFoundException(uuid.toString())));
   }
 
   @PostMapping
@@ -61,27 +62,28 @@ public class HeroController {
   /**
    * Create the Hero with given ID, overwrite if already exists.
    */
-  @PostMapping("/{id}")
+  @PostMapping("/{uuid}")
   @ResponseStatus(HttpStatus.CREATED)
-  public Mono<Hero> forceCreate(@PathVariable String id, @RequestBody @Valid HeroRequest hero) {
-    log.info("Creating hero with id {}", id);
-    return heroService.forceCreate(id, hero);
+  public Mono<Hero> forceCreate(@PathVariable @Valid UUID uuid,
+                                @RequestBody @Valid HeroRequest hero) {
+    log.info("Creating hero with id {}", uuid);
+    return heroService.forceCreate(uuid.toString(), hero);
   }
 
-  @PutMapping("/{id}")
+  @PutMapping("/{uuid}")
   @ResponseStatus(HttpStatus.OK)
-  public Mono<Hero> update(@PathVariable String id, @RequestBody @Valid HeroRequest hero) {
-    log.info("Updating the hero with id {}", id);
-    return heroService.update(id, hero)
-        .switchIfEmpty(Mono.error(new HeroNotFoundException(id)));
+  public Mono<Hero> update(@PathVariable @Valid UUID uuid, @RequestBody @Valid HeroRequest hero) {
+    log.info("Updating the hero with id {}", uuid);
+    return heroService.update(uuid.toString(), hero)
+        .switchIfEmpty(Mono.error(new HeroNotFoundException(uuid.toString())));
   }
 
-  @DeleteMapping("/{id}")
+  @DeleteMapping("/{uuid}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  public Mono<Hero> deleteById(@PathVariable String id) {
-    log.info("Deleting the hero with id {}", id);
-    return heroService.deleteById(id)
-        .switchIfEmpty(Mono.error(new HeroNotFoundException(id)));
+  public Mono<Hero> deleteById(@PathVariable @Valid UUID uuid) {
+    log.info("Deleting the hero with id {}", uuid);
+    return heroService.deleteById(uuid.toString())
+        .switchIfEmpty(Mono.error(new HeroNotFoundException(uuid.toString())));
   }
 
 }
